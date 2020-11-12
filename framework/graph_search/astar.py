@@ -49,8 +49,10 @@ class AStar(BestFirstSearch):
         Remember: In Weighted-A* the f-score is defined by ((1-w) * cost) + (w * h(state)).
         Notice: You may use `search_node.g_cost`, `self.heuristic_weight`, and `self.heuristic_function`.
         """
+        h_state = self.heuristic_function.estimate(search_node.state)
+        return ((1 - self.heuristic_weight) * search_node.g_cost) + (self.heuristic_weight * h_state)
 
-        raise NotImplementedError  # TODO: remove this line!
+        #raise NotImplementedError  # TODO: remove this line!
 
     def _open_successor_node(self, problem: GraphProblem, successor_node: SearchNode):
         """
@@ -72,4 +74,29 @@ class AStar(BestFirstSearch):
                   but still could be improved.
         """
 
-        raise NotImplementedError  # TODO: remove this line!
+        """checks if the node is already in open, and if we found lower f to the node.
+        """
+
+        if self.open.has_state(successor_node.state):
+            already_found_node_with_same_state = self.open.get_node_by_state(successor_node.state)
+            if already_found_node_with_same_state.expanding_priority > successor_node.expanding_priority:
+                self.open.extract_node(already_found_node_with_same_state)
+
+        """checks if the node is already in closed, and if we found lower f to the node.
+            in that case we need to return the node into the open queue.
+        """
+
+        if self.close.has_state(successor_node.state):
+            found_node = self.close.get_node_by_state(successor_node.state)
+            if found_node.expanding_priority > successor_node.expanding_priority:
+                self.open.push_node(successor_node)
+                self.close.remove_node(found_node)
+            else:
+                return
+
+        if not self.open.has_state(successor_node.state):
+            self.open.push_node(successor_node)
+            """"""
+
+
+        ###raise NotImplementedError  # TODO: remove this line!
