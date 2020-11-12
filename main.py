@@ -310,5 +310,4 @@ def run_all_experiments():
 
 
 if __name__ == '__main__':
-    toy_map_problem_experiments()
-    #run_all_experiments()
+    run_all_experiments()
