@@ -56,7 +56,7 @@ class MapProblem(GraphProblem):
         for link in junction.outgoing_links:
             yield OperatorResult(successor_state=MapState(link.target), operator_cost=link.distance)
 
-        # TODO [Ex.10]:
+        # [Ex.10]:
         #  Read the documentation of this method in the base class `GraphProblem.expand_state_with_costs()`.
         #  Finish the implementation of this method.
         #  Iterate over the outgoing links of the current junction (find the implementation of `Junction`
@@ -67,13 +67,13 @@ class MapProblem(GraphProblem):
         #        `link.distance`). You don't have to specify the operator name here.
         #  Note: Generally, in order to check whether a variable is set to None you should use the expression:
         #        `my_variable_to_check is None`, and particularly do NOT use comparison (==).
-        # Hi Maya
+
     def is_goal(self, state: GraphProblemState) -> bool:
         """
         :return: Whether a given map state represents the destination.
         """
         assert (isinstance(state, MapState))
 
-        # TODO [Ex.10]: modify the returned value to indicate whether `state` is a final state.
+        #  [Ex.10]: modify the returned value to indicate whether `state` is a final state.
         # You may use the problem's input parameters (stored as fields of this object by the constructor).
-        return state.junction_id == self.target_junction_id  # TODO: modify this!
+        return state.junction_id == self.target_junction_id
