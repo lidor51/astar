@@ -94,14 +94,13 @@ class MDAState(GraphProblemState):
     def get_total_nr_tests_taken_and_stored_on_ambulance(self) -> int:
         """
         This method returns the total number of of tests that are stored on the ambulance in this state.
-        TODO [Ex.17]: Implement this method.
+        [Ex.17]: Implement this method.
          Notice that this method can be implemented using a single line of code - do so!
          Use python's built-it `sum()` function.
          Notice that `sum()` can receive an *ITERATOR* as argument; That is, you can simply write something like this:
         >>> sum(<some expression using item> for item in some_collection_of_items)
         """
-        raise NotImplementedError  # TODO: remove this line.
-
+        return sum(tested_apartment.nr_roommates for tested_apartment in self.tests_on_ambulance) #TODO: check
 
 class MDAOptimizationObjective(Enum):
     Distance = 'Distance'
@@ -220,7 +219,7 @@ class MDAProblem(GraphProblem):
         Calculates the operator cost (of type `MDACost`) of an operator (moving from the `prev_state`
          to the `succ_state`). The `MDACost` type is defined above in this file (with explanations).
         Use the formal MDA problem's operator costs definition presented in the assignment-instructions.
-        TODO [Ex.17]: implement this method!
+        [Ex.17]: implement this method!
         Use the method `self.map_distance_finder.get_map_cost_between()` to calculate the distance
          between to junctions. This distance is used for calculating the 3 costs.
         If the location of the next state is not reachable (on the streets-map) from the location of
@@ -245,17 +244,35 @@ class MDAProblem(GraphProblem):
                                 its first `k` items and until the `n`-th item.
             You might find this tip useful for summing a slice of a collection.
         """
-        raise NotImplementedError  # TODO: remove this line!
+        #distance cost:
+        distance_cost = self.map_distance_finder.get_map_cost_between(prev_state, succ_state)
+        #monetary cost:
+        active_fridges = math.ceil(prev_state.get_total_nr_tests_taken_and_stored_on_ambulance() / self.problem_input.ambulance.fridge_capacity)
+        fridges_gas_consumption = sum(self.problem_input.ambulance.fridges_gas_consumption_liter_per_meter[:active_fridges])
+        gas_cost = self.problem_input.gas_liter_price * (self.problem_input.ambulance.drive_gas_consumption_liter_per_meter + fridges_gas_consumption) * distance_cost
+        commissions = (((not prev_state.tests_on_ambulance) * prev_state.tests_transfer_cost) + (prev_state.revisit_cost if (prev_state.current_site in prev_state.visited_labs) else 0)) if isinstance(prev_state, Laboratory) else 0
+        monetary_cost = gas_cost + commissions
+        #tests travel distance cost:
+        tests_travel_distance_cost = prev_state.get_total_nr_tests_taken_and_stored_on_ambulance() * distance_cost
+        return MDACost(
+            optimization_objective=self.optimization_objective,
+            distance_cost=distance_cost,
+            monetary_cost=monetary_cost,
+            tests_travel_distance_cost=tests_travel_distance_cost) #TODO: check
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
         This method receives a state and returns whether this state is a goal.
-        TODO [Ex.17]: implement this method using a single `return` line!
+        [Ex.17]: implement this method using a single `return` line!
          Use sets/frozensets comparison (`some_set == some_other_set`).
          In order to create a set from some other collection (list/tuple) you can just `set(some_other_collection)`.
         """
         assert isinstance(state, MDAState)
-        raise NotImplementedError  # TODO: remove the line!
+        #is goal state if: loc==lab & no_tests_on_ambulance & all_apartments_visited(and their tests passed to lab)
+        return isinstance(state.current_site, Laboratory) and (not state.tests_on_ambulance) and (set(self.get_reported_apartments_waiting_to_visit()) == set())
+        #alternative: return state.current_site in self.problem_input.laboratories and not state.get_total_nr_tests_taken_and_stored_on_ambulance() and not self.get_reported_apartments_waiting_to_visit())
+        #and state.tests_on_ambulance == frozenset()
+        #TODO: check (and wait for instructor answer)
 
     def get_zero_cost(self) -> Cost:
         """

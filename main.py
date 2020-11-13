@@ -164,7 +164,7 @@ def basic_mda_problem_experiments():
     small_mda_problem_with_distance_cost = get_mda_problem('small', MDAOptimizationObjective.Distance)
 
     # Ex.18
-    # TODO: create an instance of `UniformCost`, solve the `small_mda_problem_with_distance_cost`
+    # create an instance of `UniformCost`, solve the `small_mda_problem_with_distance_cost`
     #       with it and print the results.
     uc = UniformCost()
     res = uc.solve_problem(small_mda_problem_with_distance_cost)
@@ -318,4 +318,5 @@ def run_all_experiments():
 
 
 if __name__ == '__main__':
-    toy_map_problem_experiments()
+    basic_mda_problem_experiments()
+    run_all_experiments()
