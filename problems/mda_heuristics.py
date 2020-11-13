@@ -72,7 +72,7 @@ class MDASumAirDistHeuristic(HeuristicFunction):
         Note that we ignore here the problem constraints (like enforcing the #matoshim and free
          space in the ambulance's fridge). We only make sure to visit all certain junctions in
          `all_certain_junctions_in_remaining_ambulance_path`.
-        TODO [Ex.24]:
+        [Ex.24]:
             Complete the implementation of this method.
             Use `self.cached_air_distance_calculator.get_air_distance_between_junctions()` for air
              distance calculations.
@@ -92,7 +92,15 @@ class MDASumAirDistHeuristic(HeuristicFunction):
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        raise NotImplementedError  # TODO: remove this line and complete the missing part here!
+        total = 0
+        prev_junction = state.current_site
+        min_func = lambda junction: (self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction, junction), junction.index)
+        while all_certain_junctions_in_remaining_ambulance_path:
+            next_junction = min(all_certain_junctions_in_remaining_ambulance_path, key=min_func)
+            total += self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction, next_junction)
+            all_certain_junctions_in_remaining_ambulance_path.remove(next_junction)
+            prev_junction = next_junction
+        return total
 
 
 class MDAMSTAirDistHeuristic(HeuristicFunction):
