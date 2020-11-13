@@ -180,19 +180,25 @@ def mda_problem_with_astar_experiments():
     moderate_mda_problem_with_distance_cost = get_mda_problem('moderate', MDAOptimizationObjective.Distance)
 
     # Ex.22
-    # TODO: create an instance of `AStar` with the `MDAMaxAirDistHeuristic`,
+    # create an instance of `AStar` with the `MDAMaxAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+    astar = AStar(MDAMaxAirDistHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res) #TODO: check
 
     # Ex.25
-    # TODO: create an instance of `AStar` with the `MDASumAirDistHeuristic`,
+    # create an instance of `AStar` with the `MDASumAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+    astar = AStar(MDASumAirDistHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res)  # TODO: check
 
     # Ex.28
-    # TODO: create an instance of `AStar` with the `MDAMSTAirDistHeuristic`,
+    # create an instance of `AStar` with the `MDAMSTAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+    astar = AStar(MDAMSTAirDistHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res)  # TODO: check
 
 
 def mda_problem_with_weighted_astar_experiments():
