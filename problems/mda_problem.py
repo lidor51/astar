@@ -216,14 +216,11 @@ class MDAProblem(GraphProblem):
             - Python's sets union operation (`some_set_or_frozenset | some_other_set_or_frozenset`).
         """
         curr_state = state_to_expand
-        succ_state = None
-        cost = 0
-        name = ""
 
         # union of labs and apartments
         for next_state in (frozenset(self.problem_input.laboratories) |
                            frozenset(self.get_reported_apartments_waiting_to_visit(curr_state))):
-            if type(next_state) == ApartmentWithSymptomsReport:
+            if isinstance(next_state, ApartmentWithSymptomsReport):
                 total_fridges = self.problem_input.ambulance.total_fridges_capacity
                 # can visit this apartment
                 if next_state.nr_roommates + \
@@ -238,8 +235,9 @@ class MDAProblem(GraphProblem):
                                                                                 next_state.nr_roommates),
                                           curr_state.visited_labs)
                     cost = self.get_operator_cost(curr_state, succ_state)
+                    yield OperatorResult(succ_state, cost, name)
 
-            elif type(next_state) == Laboratory:
+            elif isinstance(next_state, Laboratory):
                 # can visit this lab
                 if curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or \
                         (curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() == 0 and
@@ -256,7 +254,7 @@ class MDAProblem(GraphProblem):
                                           (curr_state.visited_labs | frozenset({next_state})))
 
                     cost = self.get_operator_cost(curr_state, succ_state)
-            yield OperatorResult(succ_state, cost, name)
+                    yield OperatorResult(succ_state, cost, name)
 
         ##raise NotImplementedError  # TODO: remove this line!
 
@@ -321,7 +319,7 @@ class MDAProblem(GraphProblem):
         assert isinstance(state, MDAState)
         # is goal state if: loc==lab & no_tests_on_ambulance & all_apartments_visited(and their tests passed to lab)
         return isinstance(state.current_site, Laboratory) and (not state.tests_on_ambulance) and (
-                set(self.get_reported_apartments_waiting_to_visit()) == set())
+                set(self.get_reported_apartments_waiting_to_visit(state)) == set())
         # alternative: return state.current_site in self.problem_input.laboratories and not state.get_total_nr_tests_taken_and_stored_on_ambulance() and not self.get_reported_apartments_waiting_to_visit())
         # and state.tests_on_ambulance == frozenset()
         # TODO: check (and wait for instructor answer)
