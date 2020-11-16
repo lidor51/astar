@@ -6,7 +6,6 @@ from framework import *
 from .mda_problem import *
 from .cached_air_distance_calculator import CachedAirDistanceCalculator
 
-
 __all__ = ['MDAMaxAirDistHeuristic', 'MDASumAirDistHeuristic',
            'MDAMSTAirDistHeuristic', 'MDATestsTravelDistToNearestLabHeuristic']
 
@@ -41,6 +40,7 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         >>>     for item2 in some_items_collection
         >>>     if <some condition over item1 & item2>)
         """
+
         assert isinstance(self.problem, MDAProblem)
         assert isinstance(state, MDAState)
 
@@ -49,7 +49,10 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        return 10  # TODO: modify this line.
+        return max(self.cached_air_distance_calculator.get_air_distance_between_junctions(item1, item2)
+                   for item1 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
+                   for item2 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
+                   if item1 != item2)  # TODO: modify this line.
 
 
 class MDASumAirDistHeuristic(HeuristicFunction):
@@ -94,10 +97,12 @@ class MDASumAirDistHeuristic(HeuristicFunction):
 
         total = 0
         prev_junction = state.current_site
-        min_func = lambda junction: (self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction, junction), junction.index)
+        min_func = lambda junction: (
+        self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction, junction), junction.index)
         while all_certain_junctions_in_remaining_ambulance_path:
             next_junction = min(all_certain_junctions_in_remaining_ambulance_path, key=min_func)
-            total += self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction, next_junction)
+            total += self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction,
+                                                                                            next_junction)
             all_certain_junctions_in_remaining_ambulance_path.remove(next_junction)
             prev_junction = next_junction
         return total

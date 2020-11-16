@@ -39,7 +39,8 @@ def plot_distance_and_expanded_wrt_weight_figure(
     # https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
     # You can also Google for additional examples.
     ##raise NotImplementedError  # TODO: remove this line!
-    p1, = ax1.plot(weights, total_cost, 'b')  # TODO: pass the relevant params instead of `...`.
+    p1, = ax1.plot(weights, total_cost, 'b') # TODO: pass the relevant params instead of `...`.
+    p1.set_label('Solution cost')
 
     # ax1: Make the y-axis label, ticks and tick labels match the line color.
     ax1.set_ylabel('Solution cost', color='b')
@@ -54,6 +55,7 @@ def plot_distance_and_expanded_wrt_weight_figure(
     # TODO: Set its label to be '#Expanded states'.
     ##raise NotImplementedError  # TODO: remove this line!
     p2, = ax2.plot(weights, total_nr_expanded, 'r')  # TODO: pass the relevant params instead of `...`.
+    p2.set_label('#Expanded states')
 
     # ax2: Make the y-axis label, ticks and tick labels match the line color.
     ax2.set_ylabel('#Expanded states', color='r')
@@ -185,7 +187,7 @@ def basic_mda_problem_experiments():
     uc = UniformCost()
     res = uc.solve_problem(small_mda_problem_with_distance_cost)
     print(res)
-    exit()  # TODO: remove!
+    ##exit()  # TODO: remove!
 
 
 def mda_problem_with_astar_experiments():
@@ -340,6 +342,7 @@ def run_all_experiments():
 
 
 if __name__ == '__main__':
-    ##basic_mda_problem_experiments()
-    ##run_all_experiments()
-    toy_map_problem_experiments()
+    ## basic_mda_problem_experiments()
+    ## run_all_experiments()
+    ## toy_map_problem_experiments()
+    ## mda_problem_with_astar_experiments()
