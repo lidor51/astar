@@ -215,45 +215,44 @@ class MDAProblem(GraphProblem):
             - Other fields of the state and the problem input.
             - Python's sets union operation (`some_set_or_frozenset | some_other_set_or_frozenset`).
         """
-        curr_state = state_to_expand
 
         # union of labs and apartments
         for next_state in (frozenset(self.problem_input.laboratories) |
-                           frozenset(self.get_reported_apartments_waiting_to_visit(curr_state))):
+                           frozenset(self.get_reported_apartments_waiting_to_visit(state_to_expand))):
             if isinstance(next_state, ApartmentWithSymptomsReport):
                 total_fridges = self.problem_input.ambulance.total_fridges_capacity
                 # can visit this apartment
                 if next_state.nr_roommates + \
-                        curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() < total_fridges and \
-                    next_state.nr_roommates > curr_state.nr_matoshim_on_ambulance:
+                        state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() < total_fridges and \
+                    next_state.nr_roommates <= state_to_expand.nr_matoshim_on_ambulance:
                     # enough matoshim
                     # ambulance's total fridges capacity is enough
                     name = "visit " + next_state.reporter_name
                     succ_state = MDAState(next_state.location,
-                                          (curr_state.tests_on_ambulance | frozenset({next_state})),
-                                          curr_state.tests_transferred_to_lab, (curr_state.nr_matoshim_on_ambulance -
+                                          (state_to_expand.tests_on_ambulance | frozenset({next_state})),
+                                          state_to_expand.tests_transferred_to_lab, (state_to_expand.nr_matoshim_on_ambulance -
                                                                                 next_state.nr_roommates),
-                                          curr_state.visited_labs)
-                    cost = self.get_operator_cost(curr_state, succ_state)
+                                          state_to_expand.visited_labs)
+                    cost = self.get_operator_cost(state_to_expand, succ_state)
                     yield OperatorResult(succ_state, cost, name)
 
             elif isinstance(next_state, Laboratory):
                 # can visit this lab
-                if curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or \
-                        (curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() == 0 and
-                                                         next_state not in curr_state.visited_labs):
+                if state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or \
+                        (state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() == 0 and
+                                                         next_state not in state_to_expand.visited_labs):
                     name = "go to lab " + next_state.name
-                    if next_state in curr_state.visited_labs:
+                    if next_state in state_to_expand.visited_labs:
                         added_matoshim = 0
                     else:
                         added_matoshim = next_state.max_nr_matoshim
                     succ_state = MDAState(next_state.location,
-                                          (curr_state.tests_on_ambulance ^ curr_state.tests_on_ambulance),
-                                          (curr_state.tests_transferred_to_lab | curr_state.tests_on_ambulance),
-                                          (curr_state.nr_matoshim_on_ambulance + added_matoshim),
-                                          (curr_state.visited_labs | frozenset({next_state})))
+                                          (frozenset()),
+                                          (state_to_expand.tests_transferred_to_lab | state_to_expand.tests_on_ambulance),
+                                          (state_to_expand.nr_matoshim_on_ambulance + added_matoshim),
+                                          (state_to_expand.visited_labs | frozenset({next_state})))
 
-                    cost = self.get_operator_cost(curr_state, succ_state)
+                    cost = self.get_operator_cost(state_to_expand, succ_state)
                     yield OperatorResult(succ_state, cost, name)
 
         ##raise NotImplementedError  # TODO: remove this line!
