@@ -187,7 +187,6 @@ def basic_mda_problem_experiments():
     uc = UniformCost()
     res = uc.solve_problem(small_mda_problem_with_distance_cost)
     print(res)
-    ##exit()  # TODO: remove!
 
 
 def mda_problem_with_astar_experiments():
@@ -342,7 +341,7 @@ def run_all_experiments():
 
 
 if __name__ == '__main__':
-    basic_mda_problem_experiments()
-    #run_all_experiments()
+    #basic_mda_problem_experiments()
+    run_all_experiments()
     #toy_map_problem_experiments()
     ## mda_problem_with_astar_experiments()
