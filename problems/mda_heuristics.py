@@ -154,8 +154,8 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
             for j2 in junctions:
                 if j1 != j2:
                     graph.add_edge(j1.index, j2.index, weight=self.cached_air_distance_calculator.get_air_distance_between_junctions(j1,j2))
-        mst = nx.minimum_spanning_tree(graph, weight='weight')
-        return mst.size(weight='weight')
+        mst_tree = nx.minimum_spanning_tree(graph, weight='weight')
+        return mst_tree.size(weight='weight')
 
         ##raise NotImplementedError  # TODO: remove this line!
 
