@@ -218,43 +218,44 @@ class MDAProblem(GraphProblem):
         curr_state = state_to_expand
 
         # union of labs and apartments
-        for next_state in (frozenset(self.problem_input.laboratories) |
+        for next_place in (frozenset(self.problem_input.laboratories) |
                            frozenset(self.get_reported_apartments_waiting_to_visit(curr_state))):
-            if isinstance(next_state, ApartmentWithSymptomsReport):
+            if isinstance(next_place, ApartmentWithSymptomsReport):
                 total_fridges = self.problem_input.ambulance.total_fridges_capacity
                 # can visit this apartment
-                if next_state.nr_roommates + \
-                        curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() < total_fridges and \
-                    next_state.nr_roommates > curr_state.nr_matoshim_on_ambulance:
+                if ((next_place.nr_roommates + \
+                        curr_state.get_total_nr_tests_taken_and_stored_on_ambulance()) <= total_fridges) and \
+                        (next_place.nr_roommates <= curr_state.nr_matoshim_on_ambulance):
                     # enough matoshim
                     # ambulance's total fridges capacity is enough
-                    name = "visit " + next_state.reporter_name
-                    succ_state = MDAState(next_state.location,
-                                          (curr_state.tests_on_ambulance | frozenset({next_state})),
-                                          curr_state.tests_transferred_to_lab, (curr_state.nr_matoshim_on_ambulance -
-                                                                                next_state.nr_roommates),
-                                          curr_state.visited_labs)
+                    name = "visit " + next_place.reporter_name
+                    succ_state = MDAState(current_site=next_place,
+                                          tests_on_ambulance=(curr_state.tests_on_ambulance | frozenset({next_place})),
+                                          tests_transferred_to_lab=curr_state.tests_transferred_to_lab,
+                                          nr_matoshim_on_ambulance=(curr_state.nr_matoshim_on_ambulance - next_place.nr_roommates),
+                                          visited_labs=curr_state.visited_labs
+                                          )
                     cost = self.get_operator_cost(curr_state, succ_state)
-                    yield OperatorResult(succ_state, cost, name)
+                    yield OperatorResult(successor_state=succ_state, operator_cost=cost, operator_name=name)
 
-            elif isinstance(next_state, Laboratory):
+            elif isinstance(next_place, Laboratory):
                 # can visit this lab
-                if curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or \
-                        (curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() == 0 and
-                                                         next_state not in curr_state.visited_labs):
-                    name = "go to lab " + next_state.name
-                    if next_state in curr_state.visited_labs:
+                if (curr_state.get_total_nr_tests_taken_and_stored_on_ambulance() > 0) or \
+                        (next_place not in curr_state.visited_labs):
+                    name = "go to lab " + next_place.name
+                    if next_place in curr_state.visited_labs:
                         added_matoshim = 0
                     else:
-                        added_matoshim = next_state.max_nr_matoshim
-                    succ_state = MDAState(next_state.location,
-                                          (curr_state.tests_on_ambulance ^ curr_state.tests_on_ambulance),
-                                          (curr_state.tests_transferred_to_lab | curr_state.tests_on_ambulance),
-                                          (curr_state.nr_matoshim_on_ambulance + added_matoshim),
-                                          (curr_state.visited_labs | frozenset({next_state})))
+                        added_matoshim = next_place.max_nr_matoshim
+                    succ_state = MDAState(current_site=next_place,
+                                          tests_on_ambulance=frozenset(),
+                                          tests_transferred_to_lab=(curr_state.tests_transferred_to_lab | curr_state.tests_on_ambulance),
+                                          nr_matoshim_on_ambulance=(curr_state.nr_matoshim_on_ambulance + added_matoshim),
+                                          visited_labs=(curr_state.visited_labs | frozenset({next_place}))
+                                          )
 
                     cost = self.get_operator_cost(curr_state, succ_state)
-                    yield OperatorResult(succ_state, cost, name)
+                    yield OperatorResult(successor_state=succ_state, operator_cost=cost, operator_name=name)
 
         ##raise NotImplementedError  # TODO: remove this line!
 
@@ -289,7 +290,9 @@ class MDAProblem(GraphProblem):
             You might find this tip useful for summing a slice of a collection.
         """
         # distance cost:
-        distance_cost = self.map_distance_finder.get_map_cost_between(prev_state.current_site, succ_state.current_site)
+        src_junction = prev_state.current_site.location if hasattr(prev_state.current_site, "location") else prev_state.current_site
+        dest_junction = succ_state.current_site.location if hasattr(succ_state.current_site, "location") else succ_state.current_site
+        distance_cost = self.map_distance_finder.get_map_cost_between(src_junction, dest_junction)
         # monetary cost:
         active_fridges = math.ceil(
             prev_state.get_total_nr_tests_taken_and_stored_on_ambulance() / self.problem_input.ambulance.fridge_capacity)
@@ -322,7 +325,7 @@ class MDAProblem(GraphProblem):
                 set(self.get_reported_apartments_waiting_to_visit(state)) == set())
         # alternative: return state.current_site in self.problem_input.laboratories and not state.get_total_nr_tests_taken_and_stored_on_ambulance() and not self.get_reported_apartments_waiting_to_visit())
         # and state.tests_on_ambulance == frozenset()
-        # TODO: check (and wait for instructor answer)
+        # TODO: check
 
     def get_zero_cost(self) -> Cost:
         """
@@ -350,7 +353,7 @@ class MDAProblem(GraphProblem):
             Note: This method can be implemented using a single line of code. Try to do so.
         """
         res = list(frozenset(self.problem_input.reported_apartments)
-                   ^ (state.tests_on_ambulance | state.tests_transferred_to_lab))
+                   - (state.tests_on_ambulance | state.tests_transferred_to_lab))
         res.sort(key=lambda app: app.report_id)  # ToCheck
         return res
         ##raise NotImplementedError  # TODO: remove this line!

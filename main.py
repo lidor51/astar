@@ -342,7 +342,7 @@ def run_all_experiments():
 
 
 if __name__ == '__main__':
-    ##basic_mda_problem_experiments()
-    ## run_all_experiments()
-    toy_map_problem_experiments()
+    basic_mda_problem_experiments()
+    #run_all_experiments()
+    #toy_map_problem_experiments()
     ## mda_problem_with_astar_experiments()
