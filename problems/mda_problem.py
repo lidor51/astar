@@ -290,8 +290,8 @@ class MDAProblem(GraphProblem):
             You might find this tip useful for summing a slice of a collection.
         """
         # distance cost:
-        src_junction = prev_state.current_site.location if hasattr(prev_state.current_site, "location") else prev_state.current_site
-        dest_junction = succ_state.current_site.location if hasattr(succ_state.current_site, "location") else succ_state.current_site
+        src_junction = prev_state.current_location
+        dest_junction = succ_state.current_location
         distance_cost = self.map_distance_finder.get_map_cost_between(src_junction, dest_junction)
         # monetary cost:
         active_fridges = math.ceil(
