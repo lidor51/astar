@@ -96,7 +96,7 @@ class MDASumAirDistHeuristic(HeuristicFunction):
             return 0
 
         total = 0
-        prev_junction = state.current_site
+        prev_junction = state.current_location
         min_func = lambda junction: (
             self.cached_air_distance_calculator.get_air_distance_between_junctions(prev_junction, junction),
             junction.index)
