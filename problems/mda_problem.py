@@ -78,12 +78,11 @@ class MDAState(GraphProblemState):
         and self.nr_matoshim_on_ambulance == other.nr_matoshim_on_ambulance \
         and self.visited_labs == other.visited_labs
 
-        # TODO [Ex.17]: Complete the implementation of this method!
+        # [Ex.17]: Complete the implementation of this method!
         #  Note that you can simply compare two instances of `Junction` type
         #   (using equals `==` operator) because the class `Junction` explicitly
         #   implements the `__eq__()` method. The types `frozenset`, `ApartmentWithSymptomsReport`, `Laboratory`
         #   are also comparable (in the same manner).
-        ##raise NotImplementedError  # TODO: remove this line.
 
     def __hash__(self):
         """
@@ -188,7 +187,7 @@ class MDAProblem(GraphProblem):
 
     def expand_state_with_costs(self, state_to_expand: GraphProblemState) -> Iterator[OperatorResult]:
         """
-        TODO [Ex.17]: Implement this method!
+        [Ex.17]: Implement this method!
         This method represents the `Succ: S -> P(S)` function of the MDA problem.
         The `Succ` function is defined by the problem operators as shown in class.
         The MDA problem operators are defined in the assignment instructions.
@@ -257,8 +256,6 @@ class MDAProblem(GraphProblem):
                     cost = self.get_operator_cost(curr_state, succ_state)
                     yield OperatorResult(successor_state=succ_state, operator_cost=cost, operator_name=name)
 
-        ##raise NotImplementedError  # TODO: remove this line!
-
     def get_operator_cost(self, prev_state: MDAState, succ_state: MDAState) -> MDACost:
         """
         Calculates the operator cost (of type `MDACost`) of an operator (moving from the `prev_state`
@@ -325,7 +322,6 @@ class MDAProblem(GraphProblem):
                 set(self.get_reported_apartments_waiting_to_visit(state)) == set())
         # alternative: return state.current_site in self.problem_input.laboratories and not state.get_total_nr_tests_taken_and_stored_on_ambulance() and not self.get_reported_apartments_waiting_to_visit())
         # and state.tests_on_ambulance == frozenset()
-        # TODO: check
 
     def get_zero_cost(self) -> Cost:
         """
@@ -341,7 +337,7 @@ class MDAProblem(GraphProblem):
         This method returns a list of all reported-apartments that haven't been visited yet.
         For the sake of determinism considerations, the returned list has to be sorted by
          the apartment's report id in an ascending order.
-        TODO [Ex.17]: Implement this method.
+        [Ex.17]: Implement this method.
             Use sets difference operation (`some_set - some_other_set`).
             Use `list(some_set)` to create a list from some given set, and then use
                 `some_list_instance.sort(key=...)` to sort this list. Use a `lambda`
@@ -356,7 +352,6 @@ class MDAProblem(GraphProblem):
                    - (state.tests_on_ambulance | state.tests_transferred_to_lab))
         res.sort(key=lambda app: app.report_id)  # ToCheck
         return res
-        ##raise NotImplementedError  # TODO: remove this line!
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
@@ -364,11 +359,10 @@ class MDAProblem(GraphProblem):
         This includes the ambulance's current location, and the locations of the reported apartments
          that hasn't been visited yet.
         The list should be ordered by the junctions index ascendingly (small to big).
-        TODO [Ex.21]: Implement this method.
+        [Ex.21]: Implement this method.
             Use the method `self.get_reported_apartments_waiting_to_visit(state)`.
             Use python's `sorted(some_list, key=...)` function.
         """
         apt_list = self.get_reported_apartments_waiting_to_visit(state)
         junctions_list = [apt.location for apt in apt_list]
         return sorted(junctions_list, key=lambda a: a.index)
-        ##raise NotImplementedError  # TODO: remove this line!

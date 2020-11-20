@@ -97,6 +97,3 @@ class AStar(BestFirstSearch):
         if not self.open.has_state(successor_node.state):
             self.open.push_node(successor_node)
             """"""
-
-
-        ###raise NotImplementedError  # TODO: remove this line!
