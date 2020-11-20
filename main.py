@@ -231,7 +231,6 @@ def mda_problem_with_weighted_astar_experiments():
     #       with `MDASumAirDistHeuristic`
     #       over the `moderate_mda_problem_with_distance_cost`.
     run_astar_for_weights_in_range(heuristic_type=MDASumAirDistHeuristic, problem=moderate_mda_problem_with_distance_cost)
-    exit()
 
 def monetary_cost_objectives_mda_problem_experiments():
     print()
@@ -241,14 +240,18 @@ def monetary_cost_objectives_mda_problem_experiments():
     moderate_mda_problem_with_monetary_cost = get_mda_problem('moderate', MDAOptimizationObjective.Monetary)
 
     # Ex.32
-    # TODO: create an instance of `UniformCost`
+    # create an instance of `UniformCost`
     #       solve the `small_mda_problem_with_monetary_cost` with it and print the results.
-    exit()  # TODO: remove!
+    uc = UniformCost()
+    res = uc.solve_problem(small_mda_problem_with_monetary_cost)
+    print(res)
 
     # Ex.32
-    # TODO: create an instance of `UniformCost`
+    # create an instance of `UniformCost`
     #       solve the `moderate_mda_problem_with_monetary_cost` with it and print the results.
-    exit()  # TODO: remove!
+    uc = UniformCost()
+    res = uc.solve_problem(moderate_mda_problem_with_monetary_cost)
+    print(res)
 
 
 def multiple_objectives_mda_problem_experiments():
@@ -337,7 +340,8 @@ def run_all_experiments():
 
 if __name__ == '__main__':
     #mda_problem_with_weighted_astar_experiments()
-    run_all_experiments()
+    monetary_cost_objectives_mda_problem_experiments()
+    #run_all_experiments()
     #basic_mda_problem_experiments()
     #toy_map_problem_experiments()
     #mda_problem_with_astar_experiments()
