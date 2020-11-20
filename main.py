@@ -264,7 +264,7 @@ def multiple_objectives_mda_problem_experiments():
     # Ex.35
     # TODO: create an instance of `AStar` with the `MDATestsTravelDistToNearestLabHeuristic`,
     #       solve the `moderate_mda_problem_with_tests_travel_dist_cost` with it and print the results.
-    exit()  # TODO: remove!
+    #exit()  # TODO: remove!
 
     # Ex.38
     # TODO: Implement the algorithm A_2 described in this exercise in the assignment instructions.
@@ -281,6 +281,15 @@ def multiple_objectives_mda_problem_experiments():
     #          previous parameters with their default values and pass an argument to a parameter that is positioned
     #          elsewhere next.
     #       Solve the `moderate_mda_problem_with_tests_travel_dist_cost` with it and print the results.
+    astar = AStar(MDAMSTAirDistHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    optimal_distance_cost = res.solution_g_cost
+    eps = 0.6
+    max_distance_cost = (1 + eps) * optimal_distance_cost
+    print("optimal_distance_cost={}, max_distance_cost={}, eps={}",optimal_distance_cost, max_distance_cost, eps) # TODO: remove this line.
+    astar = AStar(heuristic_function_type=MDATestsTravelDistToNearestLabHeuristic, open_criterion=lambda node: node.cost.distance_cost <= max_distance_cost) #TODO: check.
+    res = astar.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
+    print(res)
     exit()  # TODO: remove!
 
 
@@ -340,7 +349,8 @@ def run_all_experiments():
 
 if __name__ == '__main__':
     #mda_problem_with_weighted_astar_experiments()
-    monetary_cost_objectives_mda_problem_experiments()
+    #monetary_cost_objectives_mda_problem_experiments()
+    multiple_objectives_mda_problem_experiments()
     #run_all_experiments()
     #basic_mda_problem_experiments()
     #toy_map_problem_experiments()
