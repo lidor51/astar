@@ -364,6 +364,6 @@ class MDAProblem(GraphProblem):
             Use python's `sorted(some_list, key=...)` function.
         """
         apt_list = self.get_reported_apartments_waiting_to_visit(state)
-        junctions_list = [apt.location for apt in apt_list]
-        junctions_list.append(state.current_location)
-        return sorted(junctions_list, key=lambda a: a.index)
+        junctionslist = [apt.location for apt in apt_list]
+        junctionslist.append(state.current_location)
+        return sorted(junctionslist, key=lambda a: a.index)
