@@ -26,7 +26,7 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
          junctions in the remaining ambulance path. We don't consider laboratories here because we
          do not know what laboratories would be visited in an optimal solution.
 
-        TODO [Ex.21]:
+        [Ex.21]:
             Calculate the `total_distance_lower_bound` by taking the maximum over the group
                 {airDistanceBetween(j1,j2) | j1,j2 in CertainJunctionsInRemainingAmbulancePath s.t. j1 != j2}
             Notice: The problem is accessible via the `self.problem` field.
@@ -52,7 +52,7 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         return max(self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2)
                    for j1 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
                    for j2 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
-                   if j1.index<j2.index)
+                   if j1 != j2)
 
 
 class MDASumAirDistHeuristic(HeuristicFunction):
@@ -133,7 +133,7 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
 
     def _calculate_junctions_mst_weight_using_air_distance(self, junctions: List[Junction]) -> float:
         """
-        TODO [Ex.27]: Implement this method.
+        [Ex.27]: Implement this method.
               Use `networkx` (nx) package (already imported in this file) to calculate the weight
                of the minimum-spanning-tree of the graph in which the vertices are the given junctions
                and there is an edge between each pair of distinct junctions (no self-loops) for which
@@ -147,17 +147,12 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
 
         graph = nx.Graph()
 
-        for j in junctions:
-            graph.add_node(j.index)
-
         for j1 in junctions:
             for j2 in junctions:
-                if j1.index != j2.index:
+                if j1 != j2:
                     graph.add_edge(j1.index, j2.index, weight=self.cached_air_distance_calculator.get_air_distance_between_junctions(j1,j2))
         mst_tree = nx.minimum_spanning_tree(graph, weight='weight')
         return mst_tree.size(weight='weight')
-
-        ##raise NotImplementedError  # TODO: remove this line!
 
 
 class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):

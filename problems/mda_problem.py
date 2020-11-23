@@ -318,8 +318,8 @@ class MDAProblem(GraphProblem):
         """
         assert isinstance(state, MDAState)
         # is goal state if: loc==lab & no_tests_on_ambulance & all_apartments_visited(and their tests passed to lab)
-        return isinstance(state.current_site, Laboratory) and (not state.tests_on_ambulance) and (
-                set(self.get_reported_apartments_waiting_to_visit(state)) == set())
+        return isinstance(state.current_site, Laboratory) and (not state.tests_on_ambulance) and (not
+                self.get_reported_apartments_waiting_to_visit(state))
         # alternative: return state.current_site in self.problem_input.laboratories and not state.get_total_nr_tests_taken_and_stored_on_ambulance() and not self.get_reported_apartments_waiting_to_visit())
         # and state.tests_on_ambulance == frozenset()
 
@@ -348,10 +348,7 @@ class MDAProblem(GraphProblem):
                 generated set.
             Note: This method can be implemented using a single line of code. Try to do so.
         """
-        res = list(frozenset(self.problem_input.reported_apartments)
-                   - (state.tests_on_ambulance | state.tests_transferred_to_lab))
-        res.sort(key=lambda app: app.report_id)  # ToCheck
-        return res
+        return sorted(list(set(self.problem_input.reported_apartments) - (state.tests_on_ambulance | state.tests_transferred_to_lab)), key=lambda app: app.report_id)
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
@@ -363,7 +360,6 @@ class MDAProblem(GraphProblem):
             Use the method `self.get_reported_apartments_waiting_to_visit(state)`.
             Use python's `sorted(some_list, key=...)` function.
         """
-        apt_list = self.get_reported_apartments_waiting_to_visit(state)
-        junctionslist = [apt.location for apt in apt_list]
+        junctionslist = [apt.location for apt in self.get_reported_apartments_waiting_to_visit(state)]
         junctionslist.append(state.current_location)
         return sorted(junctionslist, key=lambda a: a.index)
