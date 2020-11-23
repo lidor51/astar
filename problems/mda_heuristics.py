@@ -49,10 +49,10 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        return max(self.cached_air_distance_calculator.get_air_distance_between_junctions(item1, item2)
-                   for item1 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
-                   for item2 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
-                   if item1 != item2)  # TODO: modify this line.
+        return max(self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2)
+                   for j1 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
+                   for j2 in self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
+                   if j1.index<j2.index)
 
 
 class MDASumAirDistHeuristic(HeuristicFunction):
@@ -152,7 +152,7 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
 
         for j1 in junctions:
             for j2 in junctions:
-                if j1 != j2:
+                if j1.index != j2.index:
                     graph.add_edge(j1.index, j2.index, weight=self.cached_air_distance_calculator.get_air_distance_between_junctions(j1,j2))
         mst_tree = nx.minimum_spanning_tree(graph, weight='weight')
         return mst_tree.size(weight='weight')
@@ -191,6 +191,15 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
             """
             Returns the distance between `junction` and the laboratory that is closest to `junction`.
             """
-            return min(...)  # TODO: replace `...` with the relevant implementation.
+            return min(junction.calc_air_distance_from(lab.location)
+                       for lab in self.problem.problem_input.laboratories)
 
-        raise NotImplementedError  # TODO: remove this line!
+        total_cost = 0.0
+        for apt in state.tests_on_ambulance:
+            total_cost += apt.nr_roommates * air_dist_to_closest_lab(state.current_location)
+
+        for apt in self.problem.get_reported_apartments_waiting_to_visit(state):
+            total_cost += apt.nr_roommates * air_dist_to_closest_lab(apt.location)
+        return total_cost
+
+        ##raise NotImplementedError  # TODO: remove this line!
