@@ -292,7 +292,7 @@ def multiple_objectives_mda_problem_experiments():
     astar = AStar(heuristic_function_type=MDATestsTravelDistToNearestLabHeuristic, open_criterion=lambda node: node.cost.distance_cost <= max_distance_cost) #TODO: check.
     res = astar.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
     print(res)
-    exit()  # TODO: remove!
+    ##exit()  # TODO: remove!
 
 
 def mda_problem_with_astar_epsilon_experiments():
@@ -358,9 +358,9 @@ if __name__ == '__main__':
     #mda_problem_with_weighted_astar_experiments()
     #monetary_cost_objectives_mda_problem_experiments()
     #multiple_objectives_mda_problem_experiments()
-    #run_all_experiments()
+    run_all_experiments()
     #toy_map_problem_experiments()
     #basic_mda_problem_experiments()
-    mda_problem_with_astar_experiments()
+    #mda_problem_with_astar_experiments()
     #mda_problem_with_astar_epsilon_experiments()
 

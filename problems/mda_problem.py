@@ -286,10 +286,22 @@ class MDAProblem(GraphProblem):
                                 its first `k` items and until the `n`-th item.
             You might find this tip useful for summing a slice of a collection.
         """
+
         # distance cost:
         src_junction = prev_state.current_location
         dest_junction = succ_state.current_location
         distance_cost = self.map_distance_finder.get_map_cost_between(src_junction, dest_junction)
+
+        if distance_cost is None:
+            distance_cost = float('inf')
+            monetary_cost = float('inf')
+            tests_travel_distance_cost = float('inf')
+            return MDACost(
+                optimization_objective=self.optimization_objective,
+                distance_cost=distance_cost,
+                monetary_cost=monetary_cost,
+                tests_travel_distance_cost=tests_travel_distance_cost)
+
         # monetary cost:
         active_fridges = math.ceil(
             prev_state.get_total_nr_tests_taken_and_stored_on_ambulance() / self.problem_input.ambulance.fridge_capacity)
@@ -297,12 +309,16 @@ class MDAProblem(GraphProblem):
             self.problem_input.ambulance.fridges_gas_consumption_liter_per_meter[:active_fridges])
         gas_cost = self.problem_input.gas_liter_price * (
                 self.problem_input.ambulance.drive_gas_consumption_liter_per_meter + fridges_gas_consumption) * distance_cost
-        commissions = (((not prev_state.tests_on_ambulance) * prev_state.tests_transfer_cost) + (
-            prev_state.revisit_cost if (prev_state.current_site in prev_state.visited_labs) else 0)) if isinstance(
-            prev_state, Laboratory) else 0
+        tests_on_ambulance = 1
+        if prev_state.tests_on_ambulance == frozenset():
+            tests_on_ambulance = 0
+        commissions = ((tests_on_ambulance * succ_state.current_site.tests_transfer_cost) + (
+            succ_state.current_site.revisit_extra_cost if (succ_state.current_site in prev_state.visited_labs) else 0)) if isinstance(
+            succ_state.current_site, Laboratory) else 0
         monetary_cost = gas_cost + commissions
         # tests travel distance cost:
         tests_travel_distance_cost = prev_state.get_total_nr_tests_taken_and_stored_on_ambulance() * distance_cost
+
         return MDACost(
             optimization_objective=self.optimization_objective,
             distance_cost=distance_cost,
@@ -348,7 +364,8 @@ class MDAProblem(GraphProblem):
                 generated set.
             Note: This method can be implemented using a single line of code. Try to do so.
         """
-        return sorted(list(set(self.problem_input.reported_apartments) - (state.tests_on_ambulance | state.tests_transferred_to_lab)), key=lambda app: app.report_id)
+        return sorted(list(set(self.problem_input.reported_apartments) - (state.tests_on_ambulance | state.tests_transferred_to_lab)),
+                      key=lambda app: app.report_id)
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
