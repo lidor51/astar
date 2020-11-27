@@ -103,7 +103,7 @@ class MDAState(GraphProblemState):
          Notice that `sum()` can receive an *ITERATOR* as argument; That is, you can simply write something like this:
         >>> sum(<some expression using item> for item in some_collection_of_items)
         """
-        return sum(tested_apartment.nr_roommates for tested_apartment in self.tests_on_ambulance)  # TODO: check
+        return sum(tested_apartment.nr_roommates for tested_apartment in self.tests_on_ambulance)
 
 
 class MDAOptimizationObjective(Enum):
@@ -323,7 +323,7 @@ class MDAProblem(GraphProblem):
             optimization_objective=self.optimization_objective,
             distance_cost=distance_cost,
             monetary_cost=monetary_cost,
-            tests_travel_distance_cost=tests_travel_distance_cost)  # TODO: check
+            tests_travel_distance_cost=tests_travel_distance_cost)
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """

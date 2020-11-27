@@ -102,5 +102,3 @@ class AStarEpsilon(AStar):
         if self.use_close:
             self.close.add_node(node_to_expand)
         return node_to_expand
-
-        ##raise NotImplementedError  # TODO: remove!

@@ -175,7 +175,7 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
         The rest part of the total remained cost includes the distance between each non-visited reported-apartment
          and the closest lab (to this apartment) times the roommates in this apartment (as we take tests for all
          roommates).
-        TODO [Ex.33]:
+        [Ex.33]:
             Complete the implementation of this method.
             Use `self.problem.get_reported_apartments_waiting_to_visit(state)`.
         """
@@ -186,15 +186,12 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
             """
             Returns the distance between `junction` and the laboratory that is closest to `junction`.
             """
-            return min(junction.calc_air_distance_from(lab.location)
+            return min(self.cached_air_distance_calculator.get_air_distance_between_junctions(junction, lab.location)
                        for lab in self.problem.problem_input.laboratories)
 
         total_cost = 0.0
-        for apt in state.tests_on_ambulance:
-            total_cost += apt.nr_roommates * air_dist_to_closest_lab(state.current_location)
+        total_cost += state.get_total_nr_tests_taken_and_stored_on_ambulance() * air_dist_to_closest_lab(state.current_location)
 
         for apt in self.problem.get_reported_apartments_waiting_to_visit(state):
             total_cost += apt.nr_roommates * air_dist_to_closest_lab(apt.location)
         return total_cost
-
-        ##raise NotImplementedError  # TODO: remove this line!
