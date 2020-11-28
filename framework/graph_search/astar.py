@@ -77,7 +77,7 @@ class AStar(BestFirstSearch):
 
         if self.open.has_state(successor_node.state):
             already_found_node_with_same_state = self.open.get_node_by_state(successor_node.state)
-            if already_found_node_with_same_state.expanding_priority > successor_node.expanding_priority:
+            if already_found_node_with_same_state.g_cost > successor_node.g_cost:
                 self.open.extract_node(already_found_node_with_same_state)
 
         """checks if the node is already in closed, and if we found lower f to the node.
@@ -86,7 +86,7 @@ class AStar(BestFirstSearch):
 
         if self.close.has_state(successor_node.state):
             found_node = self.close.get_node_by_state(successor_node.state)
-            if found_node.expanding_priority > successor_node.expanding_priority:
+            if found_node.g_cost > successor_node.g_cost:
                 self.open.push_node(successor_node)
                 self.close.remove_node(found_node)
             else:
