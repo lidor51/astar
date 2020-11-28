@@ -289,7 +289,7 @@ def multiple_objectives_mda_problem_experiments():
     eps = 0.6
     max_distance_cost = (1 + eps) * optimal_distance_cost
     #print("optimal_distance_cost={}, max_distance_cost={}, eps={}".format(optimal_distance_cost, max_distance_cost, eps))
-    astar = AStar(heuristic_function_type=MDATestsTravelDistToNearestLabHeuristic, open_criterion=lambda node: node.cost.distance_cost <= max_distance_cost) #TODO: check.
+    astar = AStar(heuristic_function_type=MDATestsTravelDistToNearestLabHeuristic, open_criterion=lambda node: node.cost.distance_cost <= max_distance_cost)
     res = astar.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
     print(res)
 
