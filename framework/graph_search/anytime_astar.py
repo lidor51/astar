@@ -66,7 +66,21 @@ class AnytimeAStar(GraphProblemSolver):
             low_heuristic_weight = 0.5
             high_heuristic_weight = self.initial_high_heuristic_weight_bound
             while (high_heuristic_weight - low_heuristic_weight) > 0.01:
-                # TODO [Ex.45]:
+                mid_heuristic_weight = (low_heuristic_weight + high_heuristic_weight) / 2.0
+                astar = AStar(heuristic_function_type=self.heuristic_function_type, heuristic_weight=mid_heuristic_weight,
+                                     max_nr_states_to_expand=self.max_nr_states_to_expand_per_iteration)
+                astar_res = astar.solve_problem(problem)
+                total_nr_expanded_states += astar_res.nr_expanded_states
+                max_nr_stored_states = max(max_nr_stored_states, astar_res.max_nr_stored_states)
+                if not astar_res.is_solution_found:
+                    low_heuristic_weight = mid_heuristic_weight
+                else:  # solution found for current weight.
+                    if astar_res.solution_g_cost < best_solution.solution_g_cost:
+                        best_solution = astar_res
+                        best_heuristic_weight = mid_heuristic_weight
+                    high_heuristic_weight = mid_heuristic_weight
+
+                # [Ex.45]:
                 #  Complete the missing part inside this loop.
                 #  Perform a binary search over the possible values of `heuristic_weight`.
                 #  In each iteration, create an AStar solver with:
@@ -84,7 +98,6 @@ class AnytimeAStar(GraphProblemSolver):
                 #   obtain the g-cost of a solution). Update iff the current inspected solution cost < the cost of
                 #   the best found solution so far.
                 #  Make sure to also read the big comment in the head of this class.
-                raise NotImplementedError   # TODO: remove this line!
 
         self.solver_name = f'{self.__class__.solver_name} (h={best_solution.solver.heuristic_function.heuristic_name}, w={best_heuristic_weight:.3f})'
         return best_solution._replace(

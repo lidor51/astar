@@ -313,7 +313,7 @@ def mda_problem_with_astar_epsilon_experiments():
 
     # Ex.43
     # Try using A*eps to improve the speed (#dev) with a non-acceptable heuristic.
-    # TODO: Create an instance of `AStarEpsilon` with the `MDAMSTAirDistHeuristic`.
+    # Create an instance of `AStarEpsilon` with the `MDAMSTAirDistHeuristic`.
     #       Solve the `small_mda_problem_with_distance_cost` with it and print the results.
     #       Use focal_epsilon=0.23, and max_focal_size=40.
     #       Use within_focal_priority_function=within_focal_h_sum_priority_function. This function
@@ -323,7 +323,6 @@ def mda_problem_with_astar_epsilon_experiments():
                                 focal_epsilon=0.23, max_focal_size=40)
     res = astarepsilon.solve_problem(small_mda_problem_with_distance_cost)
     print(res)
-    ##exit()  # TODO: remove!
 
 
 def mda_problem_anytime_astar_experiments():
@@ -334,10 +333,12 @@ def mda_problem_anytime_astar_experiments():
     moderate_mda_problem_with_distance_cost = get_mda_problem('moderate', MDAOptimizationObjective.Distance)
 
     # Ex.46
-    # TODO: create an instance of `AnytimeAStar` once with the `MDAMSTAirDistHeuristic`, with
+    # create an instance of `AnytimeAStar` once with the `MDAMSTAirDistHeuristic`, with
     #       `max_nr_states_to_expand_per_iteration` set to 1000, solve the
     #       `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+    anytime_astar = AnytimeAStar(MDAMSTAirDistHeuristic, max_nr_states_to_expand_per_iteration=1000)
+    res = anytime_astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res)
 
 
 def run_all_experiments():
@@ -353,12 +354,13 @@ def run_all_experiments():
 
 
 if __name__ == '__main__':
-    #mda_problem_with_weighted_astar_experiments()
-    #monetary_cost_objectives_mda_problem_experiments()
-    #multiple_objectives_mda_problem_experiments()
     run_all_experiments()
     #toy_map_problem_experiments()
     #basic_mda_problem_experiments()
     #mda_problem_with_astar_experiments()
+    #mda_problem_with_weighted_astar_experiments()
+    #monetary_cost_objectives_mda_problem_experiments()
+    #multiple_objectives_mda_problem_experiments()
     #mda_problem_with_astar_epsilon_experiments()
+    #mda_problem_anytime_astar_experiments()
 
