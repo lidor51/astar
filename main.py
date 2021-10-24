@@ -1,3 +1,4 @@
+import framework
 from framework import *
 from problems import *
 
@@ -7,6 +8,8 @@ from typing import List, Union, Optional
 
 # Load the streets map
 streets_map = StreetsMap.load_from_csv(Consts.get_data_file_path("tlv_streets_map.csv"))
+nba_players = PlayersNBA(Consts.get_data_file_path("players.pickle"), Consts.get_data_file_path("data_avg.csv"))
+nba_scores = ScoresNBA(nba_players)
 
 # Make sure that the whole execution is deterministic.
 # This is important, because we expect to get the exact same results
@@ -340,9 +343,25 @@ def mda_problem_anytime_astar_experiments():
     res = anytime_astar.solve_problem(moderate_mda_problem_with_distance_cost)
     print(res)
 
+def nba_problem_anytime_astar():
+    nba_problem = NBAProblem(nba_players, nba_scores, frozenset(['F. VanVleet', 'N. Vucevic', 'K. Middleton', 'C. McCollum',
+                                                                 'B. Bogdanovic', 'T. Rozier',
+                                                                 'V. Oladipo',
+                                                                 'Z. Williamson',
+                                                                 'D. Bertans',
+                                                                 'A. Horford',
+                                                                 'D. Schroder',
+                                                                 'G. Trent Jr.',
+                                                                 'D. Bertans',
+                                                                 'E. Gordon',
+                                                                 ])) #TODO: nba
+    anytime_astar = AnytimeAStar(NBATotalScoreHeuristic, max_nr_states_to_expand_per_iteration=10000, initial_high_heuristic_weight_bound=0.4) #TODO: nba
+    res = anytime_astar.solve_problem(nba_problem)
+    print(res)
 
 def run_all_experiments():
     print('Running all experiments')
+    """
     toy_map_problem_experiments()
     basic_mda_problem_experiments()
     mda_problem_with_astar_experiments()
@@ -351,6 +370,8 @@ def run_all_experiments():
     multiple_objectives_mda_problem_experiments()
     mda_problem_with_astar_epsilon_experiments()
     mda_problem_anytime_astar_experiments()
+    """
+    nba_problem_anytime_astar()
 
 
 if __name__ == '__main__':

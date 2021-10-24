@@ -3,6 +3,8 @@ from .map_problem import *
 from .mda_problem_input import *
 from .mda_problem import *
 from .mda_heuristics import *
+from .nba_problem import *
+from .nba_heuristic import *
 from .cached_map_distance_finder import CachedMapDistanceFinder
 from .cached_air_distance_calculator import CachedAirDistanceCalculator
 
@@ -14,5 +16,6 @@ __all__ = [
     'MDAMaxAirDistHeuristic', 'MDAMSTAirDistHeuristic',
     'MDASumAirDistHeuristic',
     'MDATestsTravelDistToNearestLabHeuristic',
-    'CachedMapDistanceFinder', 'CachedAirDistanceCalculator'
+    'CachedMapDistanceFinder', 'CachedAirDistanceCalculator',
+    'NBAProblem', 'NBAState', 'NBATotalScoreHeuristic'
 ]
